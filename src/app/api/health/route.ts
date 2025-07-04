@@ -1,5 +1,6 @@
+import { apiUrl } from "@/lib/constants";
+
 export async function GET() {
-  const apiUrl = process.env.API_URL;
   let apiStatus = "unknown";
   let apiStatusCode = null;
 

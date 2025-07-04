@@ -1,8 +1,8 @@
 import type { NextRequest } from "next/server";
+import { apiUrl } from "@/lib/constants";
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
-  const apiUrl = process.env.API_URL;
   const { url, maxUrls, firecrawlApiKey } = body;
   const response = await fetch(`${apiUrl}/generate`, {
     method: "POST",

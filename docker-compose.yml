@@ -1,7 +1,7 @@
 services:
-  api:
+  backend:
     build:
-      context: ./script
+      context: ./backend
       dockerfile: Dockerfile
     ports:
       - "5001:5001"
