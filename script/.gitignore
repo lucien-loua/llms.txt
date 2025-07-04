@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# Pytest
+.pytest_cache/
+
+# Environnements virtuels
+.venv/
+venv/
+ENV/
+
+# Fichiers d'environnement et secrets
+.env
+.env.*
+
+# Logs
+*.log
+
+# Artefacts temporaires
+*.tmp
+*.bak
+*.swp
+
+# Dossiers de build
+build/
+dist/
+*.egg-info/
+
+# VSCode/IDE
+.vscode/
+.idea/
+
+# Docker
+*.pid
+
+# Fichiers générés par l'app
+app/__pycache__/
+tests/__pycache__/

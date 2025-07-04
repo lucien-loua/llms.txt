@@ -14,5 +14,4 @@ export interface GeneratorConfig {
   url: string;
   maxUrls: number;
   firecrawlApiKey: string;
-  openaiApiKey: string;
 }

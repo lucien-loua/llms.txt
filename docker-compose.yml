@@ -1,0 +1,10 @@
+services:
+  api:
+    build:
+      context: ./script
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5001"
+    restart: unless-stopped
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}

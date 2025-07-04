@@ -119,23 +119,7 @@ export function InputBar() {
                       />
                       <span className="text-xs text-muted-foreground mt-1 ml-1">Obtenez une clé sur <a href='https://www.firecrawl.dev/app/api-keys' target='_blank' rel='noopener noreferrer' className='underline text-primary'>firecrawl.dev</a></span>
                     </div>
-                    <div className="flex flex-col gap-1">
-                      <Label className="text-xs">OpenAI API Key</Label>
-                      <Input
-                        type="password"
-                        placeholder="sk-..."
-                        value={config.openaiApiKey}
-                        onChange={(e) =>
-                          setConfig({
-                            ...config,
-                            openaiApiKey: e.target.value,
-                          })
-                        }
-                        className="font-mono"
-                      />
-                      <span className="text-xs text-muted-foreground mt-1 ml-1">Générez une clé sur <a href='https://platform.openai.com/api-keys' target='_blank' rel='noopener noreferrer' className='underline text-primary'>openai.com</a></span>
-                    </div>
-                    {(!!config.firecrawlApiKey || !!config.openaiApiKey) && (
+                    {(!!config.firecrawlApiKey) && (
                       <div className="flex justify-end">
                         <Button variant="outline" onClick={handleResetAndClose} className="text-destructive w-full">
                           Reset

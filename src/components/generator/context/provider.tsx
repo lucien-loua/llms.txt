@@ -26,7 +26,6 @@ export function GeneratorProvider({ children }: GeneratorProviderProps) {
     url: "",
     maxUrls: 50,
     firecrawlApiKey: "",
-    openaiApiKey: "",
   });
 
   const [progress, setProgress] = useState<GenerationProgress>({
@@ -38,18 +37,15 @@ export function GeneratorProvider({ children }: GeneratorProviderProps) {
 
   useEffect(() => {
     const savedFirecrawlKey = localStorage.getItem("firecrawl-api-key");
-    const savedOpenaiKey = localStorage.getItem("openai-api-key");
-
-    if (savedFirecrawlKey || savedOpenaiKey) {
+    if (savedFirecrawlKey) {
       setConfig((prev) => ({
         ...prev,
-        firecrawlApiKey: savedFirecrawlKey || "",
-        openaiApiKey: savedOpenaiKey || "",
+        firecrawlApiKey: savedFirecrawlKey,
       }));
     }
   }, []);
 
-  const hasApiKeys = Boolean(config.firecrawlApiKey && config.openaiApiKey);
+  const hasApiKeys = Boolean(config.firecrawlApiKey);
   let isValidUrl = false;
   try {
     const u = new URL(url);
@@ -80,33 +76,46 @@ export function GeneratorProvider({ children }: GeneratorProviderProps) {
         }),
       });
 
-      if (!response.ok) throw new Error("Failed to start generation");
+      if (!response.body) throw new Error("No response stream");
 
-      const reader = response.body?.getReader();
-      if (!reader) throw new Error("No response stream");
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-
-        const chunk = new TextDecoder().decode(value);
-        const lines = chunk.split("\n").filter((line) => line.trim());
-
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() || "";
         for (const line of lines) {
           if (line.startsWith("data: ")) {
             try {
               const data = JSON.parse(line.slice(6));
-              setProgress(data);
-            } catch (e) {
-              console.error("Failed to parse SSE data:", e);
+              setProgress((prev) => ({ ...prev, ...data }));
+              if (data.status === "completed") {
+                setIsGenerating(false);
+                setProgress((prev) => ({
+                  ...prev,
+                  ...data,
+                  currentUrl: undefined,
+                }));
+                toast.success("Génération terminée", {
+                  description: "Vos fichiers llms.txt ont été générés avec succès !",
+                });
+              }
+              if (data.status === "error") {
+                setIsGenerating(false);
+                toast.error("Échec de la génération", {
+                  description: data.errors?.[0] || "Une erreur est survenue",
+                });
+              }
+            } catch {
+              // ignore parse error
             }
           }
         }
       }
-
-      toast.success("Generation complete", {
-        description: "Your llms.txt files have been generated successfully!",
-      });
     } catch (error) {
       setProgress({
         status: "error",
@@ -114,16 +123,14 @@ export function GeneratorProvider({ children }: GeneratorProviderProps) {
         processedUrls: 0,
         errors: [
           {
-            message: error instanceof Error ? error.message : "Unknown error",
+            message: error instanceof Error ? error.message : "Erreur inconnue",
           },
         ],
       });
-      toast.error("Generation failed", {
-        description:
-          error instanceof Error ? error.message : "An error occurred",
-      });
-    } finally {
       setIsGenerating(false);
+      toast.error("Échec de la génération", {
+        description: error instanceof Error ? error.message : "Une erreur est survenue",
+      });
     }
   };
 
@@ -131,11 +138,8 @@ export function GeneratorProvider({ children }: GeneratorProviderProps) {
     if (config.firecrawlApiKey) {
       localStorage.setItem("firecrawl-api-key", config.firecrawlApiKey);
     }
-    if (config.openaiApiKey) {
-      localStorage.setItem("openai-api-key", config.openaiApiKey);
-    }
     toast.success("Settings saved", {
-      description: "Your API keys have been saved locally.",
+      description: "Your API key has been saved locally.",
     });
   };
 
@@ -157,15 +161,13 @@ export function GeneratorProvider({ children }: GeneratorProviderProps) {
 
   const resetConfig = () => {
     localStorage.removeItem("firecrawl-api-key");
-    localStorage.removeItem("openai-api-key");
     setConfig({
       url: "",
       maxUrls: 50,
       firecrawlApiKey: "",
-      openaiApiKey: "",
     });
-    toast.success("Clés supprimées", {
-      description: "Les clés API ont été supprimées du stockage local.",
+    toast.success("Clé supprimée", {
+      description: "La clé Firecrawl a été supprimée du stockage local.",
     });
   };
 
