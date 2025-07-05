@@ -12,8 +12,7 @@ function ApiKeyPrompt() {
   return (
     <div className="text-center">
       <p className="text-destructive text-sm">
-        Configure your Firecrawl and OpenAI API keys in Settings for full
-        generation
+        Configure your Firecrawl API keys in Settings for full generation
       </p>
     </div>
   );
