@@ -2,6 +2,8 @@
 
 ![llms.txt OpenGraph preview](src/app/opengraph-image.png)
 
+https://github.com/user-attachments/assets/2ce04936-d18a-4148-8c82-25bbc306f608
+
 ## Project Overview
 
 `llms.txt` is a web application for generating consolidated text files from websites, designed for Large Language Model training and inference. It produces:
