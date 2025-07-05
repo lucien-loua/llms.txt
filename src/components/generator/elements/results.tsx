@@ -48,7 +48,7 @@ export function Results() {
             <div className="flex items-center space-x-2">
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="icon">
                     <Eye className="h-4 w-4" />
                   </Button>
                 </DialogTrigger>
@@ -120,7 +120,7 @@ export function Results() {
             <div className="flex items-center space-x-2">
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="icon">
                     <Eye className="h-4 w-4" />
                   </Button>
                 </DialogTrigger>

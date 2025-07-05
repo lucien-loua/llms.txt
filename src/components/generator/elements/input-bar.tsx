@@ -1,4 +1,12 @@
-import { AlertCircle, ArrowUp, Settings } from "lucide-react";
+import {
+  SiGithub
+} from "@icons-pack/react-simple-icons";
+import {
+  AlertCircle,
+  ArrowUp,
+  Settings,
+} from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import { useGenerator } from "@/components/generator/context";
 import { ThemeToggler } from "@/components/theme/toggler";
@@ -117,11 +125,25 @@ export function InputBar() {
                         }
                         className="font-mono"
                       />
-                      <span className="text-xs text-muted-foreground mt-1 ml-1">Obtenez une clé sur <a href='https://www.firecrawl.dev/app/api-keys' target='_blank' rel='noopener noreferrer' className='underline text-primary'>firecrawl.dev</a></span>
+                      <span className="text-xs text-muted-foreground mt-1 ml-1">
+                        Obtenez une clé sur{" "}
+                        <a
+                          href="https://www.firecrawl.dev/app/api-keys"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="underline text-primary"
+                        >
+                          firecrawl.dev
+                        </a>
+                      </span>
                     </div>
-                    {(!!config.firecrawlApiKey) && (
+                    {!!config.firecrawlApiKey && (
                       <div className="flex justify-end">
-                        <Button variant="outline" onClick={handleResetAndClose} className="text-destructive w-full">
+                        <Button
+                          variant="outline"
+                          onClick={handleResetAndClose}
+                          className="text-destructive w-full"
+                        >
                           Reset
                         </Button>
                       </div>
@@ -134,6 +156,22 @@ export function InputBar() {
               </Dialog>
               <PromptInputAction tooltip="Theme">
                 <ThemeToggler />
+              </PromptInputAction>
+              <PromptInputAction tooltip="Source Code">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  disabled={isGenerating}
+                  asChild
+                >
+                  <Link
+                    href="https://github.com/lucien-loua/llms.txt"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <SiGithub size={18} />
+                  </Link>
+                </Button>
               </PromptInputAction>
             </div>
             <PromptInputAction tooltip="Generate">
@@ -150,4 +188,4 @@ export function InputBar() {
       </PromptInput>
     </>
   );
-};
+}
