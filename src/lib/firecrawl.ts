@@ -4,9 +4,9 @@ import FirecrawlApp, {
   type MapResponse,
 } from "@mendable/firecrawl-js";
 import { generateText } from "ai";
-import { buildSystemPrompt, buildUserPrompt } from "@/lib/system-prompts";
+import { buildUserPrompt, getSystemPrompt } from "@/lib/system-prompts";
 
-export async function mapSite(
+export async function mapUrl(
   url: string,
   apiKey: string,
   maxUrls: number,
@@ -15,7 +15,7 @@ export async function mapSite(
   return await firecrawl.mapUrl(url, { limit: maxUrls });
 }
 
-export async function scrapePage(url: string, apiKey: string): Promise<string> {
+export async function scrapeUrl(url: string, apiKey: string): Promise<string> {
   const firecrawl = new FirecrawlApp({ apiKey });
   const res = await firecrawl.scrapeUrl(url, {
     formats: ["markdown"],
@@ -26,17 +26,15 @@ export async function scrapePage(url: string, apiKey: string): Promise<string> {
   return res.markdown;
 }
 
-export async function generateTitleAndDescription(
+export async function summarize(
   pageUrl: string,
-  markdown: string
+  markdown: string,
 ): Promise<{ title: string; description: string }> {
-  const systemPrompt = buildSystemPrompt();
-  const userPrompt = buildUserPrompt(pageUrl, markdown);
   const { text } = await generateText({
     model: openai("gpt-4o-mini"),
     messages: [
-      { role: "system", content: systemPrompt },
-      { role: "user", content: userPrompt },
+      { role: "system", content: getSystemPrompt() },
+      { role: "user", content: buildUserPrompt(pageUrl, markdown) },
     ],
     maxTokens: 100,
     temperature: 0.3,

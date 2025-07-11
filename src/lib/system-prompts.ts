@@ -1,4 +1,4 @@
-export function buildSystemPrompt(): string {
+export function getSystemPrompt(): string {
   return `You are an editorial assistant specialized in SEO for LLMs (AI models).
 Your mission: for each web page, generate a catchy title (3-4 words) and a concise description (9-12 words),
 clear, structured, and ready to be quoted in AI answers.
