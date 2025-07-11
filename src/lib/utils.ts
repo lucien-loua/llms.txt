@@ -27,3 +27,13 @@ export function downloadFile(content: string, filename: string) {
   a.click();
   URL.revokeObjectURL(url);
 }
+
+export function normalizeUrl(rawUrl?: string): string {
+  let url = rawUrl?.trim();
+  if (url?.match(/^https?:\/[^"]/)) {
+    url = url.replace(/^(https?:\/)([^/].*)/, "$1/$2");
+  } else if (!url?.match(/^https?:\/\//)) {
+    url = `https://${url}`;
+  }
+  return url;
+}

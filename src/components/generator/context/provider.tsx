@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { type ReactNode, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { downloadFile, getFileSize } from "@/lib/utils";
+import { downloadFile, getFileSize, normalizeUrl } from "@/lib/utils";
 import type { GenerationProgress, GeneratorConfig } from "../interfaces";
 import { GeneratorContext } from ".";
 
@@ -24,8 +24,8 @@ export function GeneratorProvider({ children }: GeneratorProviderProps) {
 
   const [config, setConfig] = useState<GeneratorConfig>({
     url: "",
-    maxUrls: 50,
-    firecrawlApiKey: "",
+    maxUrls: 10,
+    bringYourOwnKey: undefined,
   });
 
   const [progress, setProgress] = useState<GenerationProgress>({
@@ -36,24 +36,17 @@ export function GeneratorProvider({ children }: GeneratorProviderProps) {
   });
 
   useEffect(() => {
-    const savedFirecrawlKey = localStorage.getItem("firecrawl-api-key");
-    if (savedFirecrawlKey) {
+    const savedKey = localStorage.getItem("firecrawl-api-key");
+    if (savedKey) {
       setConfig((prev) => ({
         ...prev,
-        firecrawlApiKey: savedFirecrawlKey,
+        bringYourOwnKey: savedKey,
       }));
     }
   }, []);
 
-  const hasApiKeys = Boolean(config.firecrawlApiKey);
-  let isValidUrl = false;
-  try {
-    const u = new URL(url);
-    isValidUrl = u.protocol === "http:" || u.protocol === "https:";
-  } catch {
-    isValidUrl = false;
-  }
-  const canGenerate = isValidUrl && hasApiKeys && !isGenerating;
+  const hasOwnKey = Boolean(config.bringYourOwnKey);
+  const canGenerate = !!url && !isGenerating;
 
   const handleGenerate = async () => {
     if (!canGenerate) return;
@@ -67,12 +60,13 @@ export function GeneratorProvider({ children }: GeneratorProviderProps) {
     });
 
     try {
+      const normalizedUrl = normalizeUrl(url);
       const response = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...config,
-          url,
+          url: normalizedUrl,
         }),
       });
 
@@ -100,14 +94,14 @@ export function GeneratorProvider({ children }: GeneratorProviderProps) {
                   ...data,
                   currentUrl: undefined,
                 }));
-                toast.success("Génération terminée", {
-                  description: "Vos fichiers llms.txt ont été générés avec succès !",
+                toast.success("Generation complete", {
+                  description: "Your llms.txt files have been successfully generated!",
                 });
               }
               if (data.status === "error") {
                 setIsGenerating(false);
-                toast.error("Échec de la génération", {
-                  description: data.errors?.[0] || "Une erreur est survenue",
+                toast.error("Generation failed", {
+                  description: data.errors?.[0]?.message || "An error occurred",
                 });
               }
             } catch {
@@ -128,15 +122,15 @@ export function GeneratorProvider({ children }: GeneratorProviderProps) {
         ],
       });
       setIsGenerating(false);
-      toast.error("Échec de la génération", {
-        description: error instanceof Error ? error.message : "Une erreur est survenue",
+      toast.error("Generation failed", {
+        description: error instanceof Error ? error.message : "An error occurred",
       });
     }
   };
 
   const handleConfigSave = () => {
-    if (config.firecrawlApiKey) {
-      localStorage.setItem("firecrawl-api-key", config.firecrawlApiKey);
+    if (config.bringYourOwnKey) {
+      localStorage.setItem("firecrawl-api-key", config.bringYourOwnKey);
     }
     toast.success("Settings saved", {
       description: "Your API key has been saved locally.",
@@ -163,11 +157,11 @@ export function GeneratorProvider({ children }: GeneratorProviderProps) {
     localStorage.removeItem("firecrawl-api-key");
     setConfig({
       url: "",
-      maxUrls: 50,
-      firecrawlApiKey: "",
+      maxUrls: 10,
+      bringYourOwnKey: undefined,
     });
-    toast.success("Clé supprimée", {
-      description: "La clé Firecrawl a été supprimée du stockage local.",
+    toast.success("Key removed", {
+      description: "The Firecrawl key has been removed from local storage.",
     });
   };
 
@@ -227,8 +221,7 @@ export function GeneratorProvider({ children }: GeneratorProviderProps) {
     setProgress,
     handleGenerate,
     handleConfigSave,
-    hasApiKeys,
-    isValidUrl,
+    hasOwnKey,
     canGenerate,
     getStatusIcon,
     getStatusText,

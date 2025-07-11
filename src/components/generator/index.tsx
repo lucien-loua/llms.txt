@@ -1,22 +1,9 @@
 "use client";
 
-import { useGenerator } from "./context";
 import { GeneratorProvider } from "./context/provider";
 import { InputBar } from "./elements/input-bar";
 import { Loading } from "./elements/loading";
 import { Results } from "./elements/results";
-
-function ApiKeyPrompt() {
-  const { hasApiKeys } = useGenerator();
-  if (hasApiKeys) return null;
-  return (
-    <div className="text-center">
-      <p className="text-destructive text-sm">
-        Configure your Firecrawl API keys in Settings for full generation
-      </p>
-    </div>
-  );
-}
 
 export function Generator() {
   return (
@@ -27,7 +14,6 @@ export function Generator() {
           <Results />
           <Loading />
         </div>
-        <ApiKeyPrompt />
       </div>
     </GeneratorProvider>
   );
