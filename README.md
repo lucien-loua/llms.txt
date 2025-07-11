@@ -14,52 +14,45 @@ The tool uses [Firecrawl](https://www.firecrawl.dev/) for crawling and scraping,
 
 ## Architecture
 
-- **Frontend**: Next.js 15, React 19, TailwindCSS, Shadcn/UI, modern interface.
-- **Backend**: Python API (FastAPI) orchestrating Firecrawl REST API and OpenAI, containerized with Docker.
+- **Fullstack**: Next.js 15, React 19, TailwindCSS, Shadcn/UI, modern interface.
+- **API calls**: All crawling and AI logic is handled server-side in Next.js API routes (no separate backend needed).
 
 ## Prerequisites
 
 - Node.js >= 20
 - [pnpm](https://pnpm.io/) (recommended)
-- Docker
-- API keys:
+- API keys (required):
   - Firecrawl ([get your key](https://www.firecrawl.dev/app/api-keys))
-  - OpenAI (`OPENAI_API_KEY` environment variable)
+    - You can provide your key in the UI (Settings) or in a `.env` file as `FIRECRAWL_API_KEY` at the project root.
+  - OpenAI (`OPENAI_API_KEY` environment variable, **mandatory**)
+    - Must be set in your `.env` file or exported in your shell.
 
 ## Installation
 
-### Backend (Python API)
-
-1. Add your OpenAI key to a `.env` file at the project root or export it in your shell:
-   ```bash
-   export OPENAI_API_KEY=sk-...
-   ```
-2. Start the backend:
-   ```bash
-   docker compose up --build
-   ```
-   The API will be available at `http://localhost:5001`.
-
-### Frontend (Next.js)
-
-1. Install dependencies:
+1. Clone the repository and install dependencies:
    ```bash
    pnpm install
    ```
-2. Start the development server:
+2. Add your API keys to a `.env` file at the project root:
+   ```env
+   FIRECRAWL_API_KEY=fc-...
+   OPENAI_API_KEY=sk-...
+   ```
+   - `FIRECRAWL_API_KEY` can also be provided directly in the app UI (Settings > Firecrawl API Key).
+   - `OPENAI_API_KEY` is **mandatory** and must be present in the environment or `.env`.
+3. Start the development server:
    ```bash
    pnpm dev
    ```
    The app will be accessible at [http://localhost:3000](http://localhost:3000).
 
-3. Ensure the `API_URL` environment variable in the frontend points to the backend API (default: `http://localhost:5001`).
-
 ## Usage
 
 1. Enter the website URL to crawl in the input field.
-2. Configure your API keys in the settings (gear icon).
-3. Start the generation and monitor progress.
-4. Download the generated files (`llms.txt`, `llms-full.txt`).
+2. Configure your Firecrawl API key in the settings (gear icon) or via `.env`.
+3. Make sure your OpenAI API key is set in the environment or `.env`.
+4. Start the generation and monitor progress.
+5. Download the generated files (`llms.txt`, `llms-full.txt`).
 
 ## Customization
 
@@ -67,20 +60,19 @@ The tool uses [Firecrawl](https://www.firecrawl.dev/) for crawling and scraping,
 
 ## Technologies
 
-- **Frontend**: Next.js, React, TailwindCSS, Shadcn/UI
-- **Backend**: FastAPI, Firecrawl REST API, OpenAI, Python, Docker
+- **Fullstack**: Next.js, React, TailwindCSS, Shadcn/UI
+- **Crawling & AI**: Firecrawl REST API, OpenAI
 
 ## Deployment
 
-- Frontend: Compatible with Vercel, Docker, and other platforms.
-- Backend: Ready-to-use Docker container.
+- Deployable on Vercel, Docker, or any platform supporting Next.js 15.
+- No separate backend or Docker container required.
 
 ## Resources
 
 - [Firecrawl Documentation](https://docs.firecrawl.dev/)
 - [OpenAI API Reference](https://platform.openai.com/docs/api-reference)
 - [Next.js Documentation](https://nextjs.org/docs)
-- [FastAPI Documentation](https://fastapi.tiangolo.com/)
 
 ---
 
