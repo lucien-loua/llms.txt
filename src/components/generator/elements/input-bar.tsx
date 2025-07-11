@@ -73,7 +73,7 @@ export function InputBar() {
                   </Button>
                 </DialogTrigger>
               </PromptInputAction>
-              <DialogContent className="max-w-lg">
+              <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Settings</DialogTitle>
                 </DialogHeader>
