@@ -1,10 +1,9 @@
 import type { NextRequest } from "next/server";
-import type { GeneratorConfig, ProgressError } from "@/components/generator/interfaces";
-import {
-  generateTitleAndDescription,
-  mapSite,
-  scrapePage,
-} from "@/lib/firecrawl";
+import type {
+  GeneratorConfig,
+  ProgressError,
+} from "@/components/generator/interfaces";
+import { mapUrl, scrapeUrl, summarize } from "@/lib/firecrawl";
 import { buildLlmsFiles, type PageResult } from "@/lib/llms.txt";
 import { normalizeUrl } from "@/lib/utils";
 
@@ -27,7 +26,7 @@ export async function POST(req: NextRequest) {
   }
   let mapRes = null;
   try {
-    mapRes = await mapSite(url, firecrawlApiKey, effectiveMaxUrls);
+    mapRes = await mapUrl(url, firecrawlApiKey, effectiveMaxUrls);
   } catch (e) {
     return new Response(
       `data: ${JSON.stringify({ status: "error", errors: [{ message: `Firecrawl map error: ${(e as Error).message}` }] })}\n\n`,
@@ -66,7 +65,7 @@ export async function POST(req: NextRequest) {
         (async () => {
           let markdown = "";
           try {
-            markdown = await scrapePage(pageUrl, firecrawlApiKey);
+            markdown = await scrapeUrl(pageUrl, firecrawlApiKey);
           } catch (err) {
             errors.push({
               url: pageUrl,
@@ -83,7 +82,7 @@ export async function POST(req: NextRequest) {
           let title = "Page",
             description = "No description available";
           try {
-            const result = await generateTitleAndDescription(pageUrl, markdown);
+            const result = await summarize(pageUrl, markdown);
             title = result.title;
             description = result.description;
           } catch {
