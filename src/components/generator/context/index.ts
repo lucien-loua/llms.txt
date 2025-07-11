@@ -15,8 +15,7 @@ export interface GeneratorContextType {
   setProgress: React.Dispatch<React.SetStateAction<GenerationProgress>>;
   handleGenerate: () => void;
   handleConfigSave: () => void;
-  hasApiKeys: boolean;
-  isValidUrl: boolean;
+  hasOwnKey: boolean;
   canGenerate: boolean;
   getStatusIcon: () => React.ReactNode;
   getStatusText: () => string;
